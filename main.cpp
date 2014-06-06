@@ -22,8 +22,8 @@ void run();
 int main() {
     database db((char*)"test.db");
 
-    user newUser1("Stuart", "Toronto", 22);
-    db.insertUser(&newUser1);
+    //user newUser1("Stuart", "Toronto", 22);
+    //db.insertUser(&newUser1);
 
     user User;
 
