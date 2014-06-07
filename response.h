@@ -25,17 +25,26 @@ class Response {
             return age_;
         }
 
-        inline int getPass() {
+        inline int getPassword() {
             return password_;
         }
 
+        inline int getSuccess() {
+            return success_;
+        }
+
         void set(user &User);
+
+        void success(bool success) {
+            success_ = success;
+        }
 
     private:
         string name_;
         string location_;
         int age_;
         int password_;
+        bool success_;
 };
 
 #endif

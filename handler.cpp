@@ -36,15 +36,27 @@ bool Handler::handleGet(Request &request, Response &response, database &db) {
     cout << "name is \"" << response.getName() << "\"\n"
          << "location is \"" << response.getLocation() << "\"\n"
          << "Age is \"" << response.getAge() << "\"\n"
-         << "password is \"" << response.getPass() << "\"\n";*/
+         << "password is \"" << response.getPassword() << "\"\n";*/
     return true;
 }
 
 bool Handler::handleSet(Request &request, Response &response, database &db) {
+    user User;
+    request.push(User);
+    db.insertUser(&User);
+
+    response.success(true);
+    response.set(User);
+
     return true;
 }
 
 bool Handler::handleDel(Request &request, Response &response, database &db) {
+    user User;
+    db.getUser((char*)request.getName().c_str(), &User);
+    db.deleteUser((char*)request.getName().c_str());
+    response.success(true);
+    response.set(User);
     return true;
 }
 

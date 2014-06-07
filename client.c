@@ -13,14 +13,65 @@ void error(const char *msg)
     exit(0);
 }
 
+int setup();
+
 int main(int argc, char *argv[])
 {
-    int sockfd, portno, n;
+    int n, sockfd;
+    char buffer[256];
+    sockfd = setup();
+
+    //insert user
+    bzero(buffer,256);
+    sprintf(buffer, "command=set:name=John:location=Victoria:age=20");
+    //fgets(buffer,255,stdin);
+    n = write(sockfd,buffer,strlen(buffer));
+    if (n < 0) 
+         error("ERROR writing to socket");
+    bzero(buffer,256);
+    n = read(sockfd,buffer,255);
+    if (n < 0) 
+         error("ERROR reading from socket");
+    printf("%s\n",buffer);
+    close(sockfd);
+
+    //get user
+    sockfd = setup();
+    bzero(buffer,256);
+    sprintf(buffer, "command=get:name=John");
+    //fgets(buffer,255,stdin);
+    n = write(sockfd,buffer,strlen(buffer));
+    if (n < 0) 
+         error("ERROR writing to socket");
+    bzero(buffer,256);
+    n = read(sockfd,buffer,255);
+    if (n < 0) 
+         error("ERROR reading from socket");
+    printf("%s\n",buffer);
+    close(sockfd);
+
+    //delete user
+    sockfd = setup();
+    bzero(buffer,256);
+    sprintf(buffer, "command=del:name=John");
+    //fgets(buffer,255,stdin);
+    n = write(sockfd,buffer,strlen(buffer));
+    if (n < 0) 
+         error("ERROR writing to socket");
+    bzero(buffer,256);
+    n = read(sockfd,buffer,255);
+    if (n < 0) 
+         error("ERROR reading from socket");
+    printf("%s\n",buffer);
+    close(sockfd);
+    return 0;
+}
+
+int setup() {
+    int sockfd;
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
-    char buffer[256];
-    portno = 50000;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) 
         error("ERROR opening socket");
@@ -34,21 +85,10 @@ int main(int argc, char *argv[])
     bcopy((char *)server->h_addr, 
          (char *)&serv_addr.sin_addr.s_addr,
          server->h_length);
-    serv_addr.sin_port = htons(portno);
+    serv_addr.sin_port = htons(50000);
     if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
         error("ERROR connecting");
-    //printf("Please enter the message: ");
-    bzero(buffer,256);
-    sprintf(buffer, "command=get:name=stuart");
-    //fgets(buffer,255,stdin);
-    n = write(sockfd,buffer,strlen(buffer));
-    if (n < 0) 
-         error("ERROR writing to socket");
-    bzero(buffer,256);
-    n = read(sockfd,buffer,255);
-    if (n < 0) 
-         error("ERROR reading from socket");
-    printf("%s\n",buffer);
-    close(sockfd);
-    return 0;
+
+    return sockfd;
+
 }

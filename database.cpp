@@ -1,5 +1,6 @@
 #include "database.h"
 #include <sstream>
+#include <iostream>
 
 
 
@@ -7,6 +8,15 @@
 database::database(char* filename) {
     db = NULL;
     open(filename);
+    vector<vector<string> > tableExist = query("SELECT name FROM sqlite_master WHERE type='table' AND name='USER';");
+    try {
+        if (tableExist.at(0).at(0).compare("USER")){
+            query("CREATE TABLE USER (name text NOT NULL, location text NOT NULL, age int NOT NULL)");
+        }
+    }
+    catch (const exception &ex){
+        query("CREATE TABLE USER (name text NOT NULL, location text NOT NULL, age int NOT NULL)");
+    }
 }
 
 database::~database() {
@@ -76,6 +86,14 @@ user *database::getUser(char* name, user *user) {
     user->setAge(atoi(buf[0][2].c_str()));
 
     return (user);
+}
+
+int database::deleteUser(char* name) {
+    ostringstream sqlSS;
+    sqlSS << "DELETE FROM USER WHERE name=\""
+          << name << "\";";
+    query(sqlSS.str().c_str());
+    return 0;
 }
 
 void database::close() {

@@ -17,6 +17,7 @@ class database {
         vector<vector<string> >query(const char* query);
         int insertUser(user *user);
         user *getUser(char* name, user *user);
+        int deleteUser(char* name);
         void close();
 
     private:

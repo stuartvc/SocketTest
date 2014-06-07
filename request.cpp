@@ -76,5 +76,10 @@ void Request::setData() {
     }
 }
 
+void Request::push(user &User) {
+    User.setName(name_);
+    User.setLocation(location_);
+    User.setAge(age_);
+}
 
 

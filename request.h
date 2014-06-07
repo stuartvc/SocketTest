@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <stdio.h>
+#include "user.h"
 
 using namespace std;
 
@@ -40,7 +41,7 @@ class Request {
             return age_;
         }
 
-        inline int getPass() {
+        inline int getPassword() {
             return password_;
         }
 
@@ -52,6 +53,8 @@ class Request {
         string getQuery(string key);
 
         void setData();
+
+        void push(user &User);
 
     private:
         Command command_;
