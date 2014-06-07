@@ -1,7 +1,7 @@
 all : server client
 
-server : main.o user.o database.o response.o request.o parse.o handler.o
-	g++ -o server main.o user.o database.o response.o request.o parse.o handler.o -l sqlite3
+server : main.o user.o database.o response.o request.o parse.o handler.o socket.o
+	g++ -o server main.o user.o database.o response.o request.o parse.o handler.o socket.o -l sqlite3
 
 main.o : main.cpp request.h parse.h response.h database.h user.h 
 	g++ -c main.cpp
@@ -23,6 +23,9 @@ handler.o : handler.cpp handler.h request.h
 
 parse.o : parse.cpp parse.h request.h
 	g++ -c parse.cpp
+
+socket.o : socket.cpp socket.h request.h
+	g++ -c socket.cpp
 
 client : client.o
 	gcc -o client client.o
