@@ -19,11 +19,8 @@ void run(database &db);
 int main() {
     database db((char*)"test.db");
 
-    //user newUser1("Stuart", "Toronto", 22);
-    //db.insertUser(&newUser1);
-
+    //print out the rows in the database for debug
     user User;
-
     vector<vector<std::string> > vec = db.query((const char*)"SELECT * FROM USER");
     for( std::vector<vector<std::string> >::const_iterator i = vec.begin(); i != vec.end(); ++i) {
         vector<std::string> temp = *i;
@@ -32,15 +29,10 @@ int main() {
         cout << endl;
     }
 
-    db.getUser((char*)"stuart", &User);
-    cout << User.getName() << ", "
-         << User.getLocation() << ", "
-         << User.getAge() << endl;
-
-    //user newUser("Jim", "Victoria", 22);
-
-    //db.insertUser(&newUser);
-
+    //run the server
+    //listen for requests
+    //execute requests
+    //send response
     run(db);
     db.close();
 

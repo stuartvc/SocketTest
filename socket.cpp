@@ -38,7 +38,16 @@ void Socket::readRequest(Request &request) {
 }
 
 void Socket::writeResponse(Response &response) {
-    int n = write(newsockfd_,"I got your message",18);
+    char buffer[256];
+    int len;
+    bzero(buffer,256);
+    sprintf(buffer, "name=%s:location=%s:age=%i",
+            response.getName().c_str(),
+            response.getLocation().c_str(),
+            response.getAge());
+    len = strlen(buffer);
+    printf("Here is the response: %s\n",buffer);
+    int n = write(newsockfd_,buffer,len);
     if (n < 0) error("ERROR writing to socket");
 }
 
