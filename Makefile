@@ -1,38 +1,36 @@
-all : server client
+CC=g++
+CFLAGS=-c -Wall
+LDFLAGS=-lsqlite3
+SERVERSOURCES=main.cpp\
+		user.cpp\
+		database.cpp\
+		response.cpp\
+		request.cpp\
+		parse.cpp\
+		handler.cpp\
+		socket.cpp
 
-server : main.o user.o database.o response.o request.o parse.o handler.o socket.o
-	g++ -o server main.o user.o database.o response.o request.o parse.o handler.o socket.o -l sqlite3
+CLIENTSOURCES=client.c
 
-main.o : main.cpp request.h parse.h response.h database.h user.h 
-	g++ -c main.cpp
+SOURCES=$(SERVERSOURCES) $(CLIENTSOURCES)
 
-user.o : user.cpp user.h
-	g++ -c user.cpp
+SERVEROBJECTS=$(SERVERSOURCES:.cpp=.o)
+	SERVER=server
 
-database.o : database.cpp database.h
-	g++ -c database.cpp
+CLIENTOBJECTS=$(CLIENTSOURCES:.cpp=.o)
+	CLIENT=client
 
-request.o : request.cpp request.h
-	g++ -c request.cpp
+all: $(SOURCES) $(SERVER) $(CLIENT)
+		
+$(CLIENT): $(CLIENTOBJECTS) 
+		$(CC) $(CLIENTOBJECTS) -o $@
 
-response.o : response.cpp response.h
-	g++ -c response.cpp
+$(SERVER): $(SERVEROBJECTS) 
+		$(CC) $(SERVEROBJECTS) $(LDFLAGS) -o $@
 
-handler.o : handler.cpp handler.h request.h
-	g++ -c handler.cpp
-
-parse.o : parse.cpp parse.h request.h
-	g++ -c parse.cpp
-
-socket.o : socket.cpp socket.h request.h
-	g++ -c socket.cpp
-
-client : client.o
-	gcc -o client client.o
-
-client.o : client.c
-	gcc -c client.c
+.cpp.o:
+		$(CC) $(CFLAGS) $< -o $@
 
 clean :
-	rm -Rf *.o
-	rm -Rf server client
+	rm *.o
+	rm server client
