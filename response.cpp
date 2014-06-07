@@ -15,3 +15,10 @@ Response::Response(string name,
     age_ = age;
     password_ = password;
 }
+
+void Response::set(user &User) {
+    name_ = User.getName();
+    location_ = User.getLocation();
+    age_ = User.getAge();
+    password_ = 1234;
+}

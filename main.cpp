@@ -2,6 +2,8 @@
 #include "user.h"
 #include "parse.h"
 #include "request.h"
+#include "response.h"
+#include "handler.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,13 +13,21 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+typedef struct {
+    int sockfd;
+    struct sockaddr_in cli_addr;
+    socklen_t clilen;
+} socketInfo;
+
 void error(const char *msg)
 {
     perror(msg);
     exit(1);
 }
 
-void run();
+socketInfo setup();
+
+void run(database &db);
 
 int main() {
     database db((char*)"test.db");
@@ -35,7 +45,7 @@ int main() {
         cout << endl;
     }
 
-    db.getUser((char*)"Stuart", &User);
+    db.getUser((char*)"stuart", &User);
     cout << User.getName() << ", "
          << User.getLocation() << ", "
          << User.getAge() << endl;
@@ -44,36 +54,23 @@ int main() {
 
     //db.insertUser(&newUser);
 
+    run(db);
     db.close();
-    run();
 
     return 0;
 }
 
-void run() {
-    int sockfd, newsockfd, portno;
-    socklen_t clilen;
+void run(database &db) {
+    Handler handler;
+    Response response;
+    socketInfo socInfo = setup();
+    int newsockfd;
     char buffer[256];
-    struct sockaddr_in serv_addr, cli_addr;
     int n;
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) 
-    error("ERROR opening socket");
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    portno = 50000;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(portno);
-    if (bind(sockfd, (struct sockaddr *) &serv_addr,
-          sizeof(serv_addr)) < 0) 
-          error("ERROR on binding");
-    listen(sockfd,5);
-    clilen = sizeof(cli_addr);
-
     while (1/*readfrom socket*/) {
-        newsockfd = accept(sockfd, 
-                 (struct sockaddr *) &cli_addr, 
-                 &clilen);
+        newsockfd = accept(socInfo.sockfd, 
+                 (struct sockaddr *) &(socInfo.cli_addr), 
+                 &(socInfo.clilen));
         if (newsockfd < 0) {
             error("ERROR on accept");
         }
@@ -84,7 +81,8 @@ void run() {
         printf("Here is the message: %s\n",buffer);
         Request request;
         parse(request, buffer);
-        fprintf(stdout, "name: \"%s\"\n", request.getQuery("name").c_str());
+        request.setData();
+        handler.handleRequest(request, response, db);
         n = write(newsockfd,"I got your message",18);
         if (n < 0) error("ERROR writing to socket");
         //put into request datatype
@@ -103,6 +101,26 @@ void run() {
         //write to socket
     }
     close(newsockfd);
-    close(sockfd);
+    close(socInfo.sockfd);
     return ; 
+}
+
+socketInfo setup() {
+    socketInfo ret;
+    struct sockaddr_in serv_addr;
+    ret.sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (ret.sockfd < 0) 
+    error("ERROR opening socket");
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(50000);
+    if (bind(ret.sockfd, (struct sockaddr *) &serv_addr,
+          sizeof(serv_addr)) < 0) 
+          error("ERROR on binding");
+    listen(ret.sockfd,5);
+    ret.clilen = sizeof(ret.cli_addr);
+    return ret;
+
+
 }

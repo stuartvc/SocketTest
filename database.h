@@ -1,4 +1,4 @@
-#ifndef DATEBASE_H_
+#ifndef DATABASE_H_
 #define DATABASE_H_
 #include "user.h"
 #include <stdlib.h>

@@ -1,6 +1,7 @@
 #ifndef RESPONSE_H_
 #define RESPONSE_H_
 #include <string>
+#include "user.h"
 
 using namespace std;
 
@@ -27,6 +28,8 @@ class Response {
         inline int getPass() {
             return password_;
         }
+
+        void set(user &User);
 
     private:
         string name_;

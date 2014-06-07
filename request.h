@@ -8,9 +8,10 @@
 using namespace std;
 
 enum Command {
-    get = 0,
-    set = 1,
-    del = 2
+    getCom = 0,
+    setCom = 1,
+    delCom = 2,
+    noCom = 3
 };
 
 
@@ -49,6 +50,8 @@ class Request {
         }
 
         string getQuery(string key);
+
+        void setData();
 
     private:
         Command command_;
