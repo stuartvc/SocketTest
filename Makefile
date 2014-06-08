@@ -8,7 +8,8 @@ SERVERSOURCES=main.cpp\
 		request.cpp\
 		parse.cpp\
 		handler.cpp\
-		socket.cpp
+		socket.cpp\
+		logging.cpp
 
 CLIENTSOURCES=client.c
 

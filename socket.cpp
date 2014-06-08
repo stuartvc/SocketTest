@@ -1,5 +1,6 @@
 #include "socket.h"        
 #include "parse.h"
+#include "logging.h"
 
 
 Socket::Socket() {
@@ -32,7 +33,7 @@ void Socket::readRequest(Request &request) {
     bzero(buffer,256);
     int n = read(newsockfd_,buffer,255);
     if (n < 0) error("ERROR reading from socket");
-    printf("Here is the message: %s\n",buffer);
+    log.log("Got message: " + std::string(buffer));
     parse(request, buffer);
     request.setData();
 }
@@ -46,7 +47,7 @@ void Socket::writeResponse(Response &response) {
             response.getLocation().c_str(),
             response.getAge());
     len = strlen(buffer);
-    printf("Here is the response: %s\n",buffer);
+    log.log("sent message: " + std::string(buffer));
     int n = write(newsockfd_,buffer,len);
     if (n < 0) error("ERROR writing to socket");
 }

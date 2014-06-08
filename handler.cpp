@@ -1,6 +1,7 @@
 #include "handler.h"
 #include <iostream>
 #include <stdio.h>
+#include "logging.h"
 
 
 
@@ -32,11 +33,8 @@ bool Handler::handleGet(Request &request, Response &response, database &db) {
 
     response.set(User);
 
-    /*
-    cout << "name is \"" << response.getName() << "\"\n"
-         << "location is \"" << response.getLocation() << "\"\n"
-         << "Age is \"" << response.getAge() << "\"\n"
-         << "password is \"" << response.getPassword() << "\"\n";*/
+    log.log("Get complete");
+
     return true;
 }
 
@@ -47,6 +45,7 @@ bool Handler::handleSet(Request &request, Response &response, database &db) {
 
     response.success(true);
     response.set(User);
+    log.log("Set complete");
 
     return true;
 }
@@ -57,6 +56,7 @@ bool Handler::handleDel(Request &request, Response &response, database &db) {
     db.deleteUser((char*)request.getName().c_str());
     response.success(true);
     response.set(User);
+    log.log("Del complete");
     return true;
 }
 

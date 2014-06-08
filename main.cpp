@@ -5,6 +5,7 @@
 #include "response.h"
 #include "handler.h"
 #include "socket.h"
+#include "logging.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +19,8 @@ void run(database &db);
 
 int main() {
     database db((char*)"test.db");
+
+    log.log("Starting server");
 
     //print out the rows in the database for debug
     user User;
