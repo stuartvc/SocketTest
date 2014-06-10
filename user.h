@@ -10,20 +10,24 @@ class user {
         user();
         user(std::string name,
              std::string location,
-             int age);
+             int age,
+             int password);
         ~user();
 
         std::string getName();
         std::string getLocation();
         int getAge();
-        void setName(std::string newName);
-        void setLocation(std::string newLocation);
-        void setAge(int newAge);
+        int getPassword();
+        void setName(std::string name);
+        void setLocation(std::string location);
+        void setAge(int age);
+        void setPassword(int password);
 
     private:
-        std::string name;
-        std::string location;
-        int age;
+        std::string name_;
+        std::string location_;
+        int age_;
+        int password_;
 };
 
 

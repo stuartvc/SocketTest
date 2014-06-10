@@ -80,6 +80,7 @@ void Request::push(user &User) {
     User.setName(name_);
     User.setLocation(location_);
     User.setAge(age_);
+    User.setPassword(password_);
 }
 
 

@@ -5,7 +5,7 @@
 logger log(MY_LOG_FILE);
 
 logger::logger(std::string file) {
-    logfile_.open(file.c_str(), std::ofstream::out);
+    logfile_.open(file.c_str(), std::ofstream::app);
 }
 logger::~logger() {
     logfile_.close();

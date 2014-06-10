@@ -20,5 +20,5 @@ void Response::set(user &User) {
     name_ = User.getName();
     location_ = User.getLocation();
     age_ = User.getAge();
-    password_ = 1234;
+    password_ = User.getPassword();
 }

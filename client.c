@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     //insert user
     memset(buffer,0,256);
-    sprintf(buffer, "command=set:name=John:location=Victoria:age=20");
+    sprintf(buffer, "command=set:name=John:location=Victoria:age=20:password=1234");
     //fgets(buffer,255,stdin);
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) 
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     //get user
     sockfd = setup();
     memset(buffer,0,256);
-    sprintf(buffer, "command=get:name=John");
+    sprintf(buffer, "command=get:name=John:password=123");
     //fgets(buffer,255,stdin);
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     //delete user
     sockfd = setup();
     memset(buffer,0,256);
-    sprintf(buffer, "command=del:name=John");
+    sprintf(buffer, "command=del:name=John:password=1234");
     //fgets(buffer,255,stdin);
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) 
@@ -75,7 +75,7 @@ int setup() {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) 
         error("ERROR opening socket");
-    server = gethostbyname("localhost");
+    server = gethostbyname("scampen-ud");
     if (server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
         exit(0);

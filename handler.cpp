@@ -27,11 +27,13 @@ bool Handler::handleRequest(Request &request, Response &response, database &db) 
 
 bool Handler::handleGet(Request &request, Response &response, database &db) {
     
-    user User;
+    user requestUser;
+    user responseUser;
+    request.push(requestUser);
 
-    db.getUser((char*)request.getName().c_str(), &User);
+    db.getUser(requestUser, &responseUser);
 
-    response.set(User);
+    response.set(responseUser);
 
     log.log("Get complete");
 
@@ -51,11 +53,14 @@ bool Handler::handleSet(Request &request, Response &response, database &db) {
 }
 
 bool Handler::handleDel(Request &request, Response &response, database &db) {
-    user User;
-    db.getUser((char*)request.getName().c_str(), &User);
-    db.deleteUser((char*)request.getName().c_str());
+    user responseUser;
+    user requestUser;
+    request.push(requestUser);
+
+    db.getUser(requestUser, &responseUser);
+    db.deleteUser(requestUser);
     response.success(true);
-    response.set(User);
+    response.set(responseUser);
     log.log("Del complete");
     return true;
 }

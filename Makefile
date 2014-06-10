@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-c -Wall
-LDFLAGS=-lsqlite3
+LDFLAGS=-lsqlite3 -lcrypto
 SERVERSOURCES=main.cpp\
 		user.cpp\
 		database.cpp\
@@ -12,6 +12,14 @@ SERVERSOURCES=main.cpp\
 		logging.cpp
 
 CLIENTSOURCES=client.c
+ifndef _ARCH 
+	_ARCH := $(shell uname) 
+	export _ARCH 
+endif
+ifeq ($(shell uname), SunOS)
+	LDFLAGS += -lsocket -lnsl
+endif
+
 
 SOURCES=$(SERVERSOURCES) $(CLIENTSOURCES)
 
@@ -24,7 +32,7 @@ CLIENTOBJECTS=$(CLIENTSOURCES:.cpp=.o)
 all: $(SOURCES) $(SERVER) $(CLIENT)
 		
 $(CLIENT): $(CLIENTOBJECTS) 
-		$(CC) $(CLIENTOBJECTS) -o $@
+		$(CC) $(CLIENTOBJECTS) $(LDFLAGS) -o $@
 
 $(SERVER): $(SERVEROBJECTS) 
 		$(CC) $(SERVEROBJECTS) $(LDFLAGS) -o $@

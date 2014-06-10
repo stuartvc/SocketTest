@@ -16,11 +16,13 @@ class database {
         bool open(char* filename);
         vector<vector<string> >query(const char* query);
         int insertUser(user *user);
-        user *getUser(char* name, user *user);
-        int deleteUser(char* name);
+        user *getUser(user , user *ResponseUser);
+        int deleteUser(user user);
         void close();
 
     private:
+        bool setPassword(user *user);
+        bool isAuth(user user);
         sqlite3 *db;
 };
 

@@ -1,6 +1,7 @@
 #include "socket.h"        
 #include "parse.h"
 #include "logging.h"
+#include <iostream>
 
 
 Socket::Socket() {
@@ -23,7 +24,7 @@ Socket::~Socket() {
 }
 
 void Socket::readRequest(Request &request) {
-    char buffer[256];
+    char buffer[256], addr[256];
     newsockfd_ = accept(sockfd_, 
              (struct sockaddr *) &(cli_addr_), 
              &(clilen_));
@@ -31,9 +32,12 @@ void Socket::readRequest(Request &request) {
         error("ERROR on accept");
     }
     bzero(buffer,256);
+    bzero(addr,256);
+    inet_ntop(AF_INET, &cli_addr_, addr, 256);
     int n = read(newsockfd_,buffer,255);
     if (n < 0) error("ERROR reading from socket");
-    log.log("Got message: " + std::string(buffer));
+
+    log.log("Got message: " + std::string(buffer) + " from: " + std::string(addr));
     parse(request, buffer);
     request.setData();
 }

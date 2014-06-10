@@ -2,35 +2,44 @@
 
 
 user::user() {
-    name="";
-    location="";
-    age=0;
+    name_="";
+    location_="";
+    age_=0;
+    password_=0;
 }
-user::user(std::string newName,
-           std::string newLocation,
-           int newAge){
-    name = newName;
-    location = newLocation;
-    age = newAge;
+user::user(std::string name,
+           std::string location,
+           int age,
+           int password){
+    name_ = name;
+    location_ = location;
+    age_ = age;
+    password_ = password;
 }
 user::~user() {
 }
 
 std::string user::getName() {
-    return name;
+    return name_;
 }
 std::string user::getLocation() {
-    return location;
+    return location_;
 }
 int user::getAge() {
-    return age;
+    return age_;
 }
-void user::setName(std::string newName) {
-    name = newName;
+int user::getPassword() {
+    return password_;
 }
-void user::setLocation(std::string newLocation) {
-    location = newLocation;
+void user::setName(std::string name) {
+    name_ = name;
 }
-void user::setAge(int newAge) {
-    age = newAge;
+void user::setLocation(std::string location) {
+    location_ = location;
+}
+void user::setAge(int age) {
+    age_ = age;
+}
+void user::setPassword(int password) {
+    password_ = password;
 }
