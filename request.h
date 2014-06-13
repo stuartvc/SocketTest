@@ -23,7 +23,7 @@ class Request {
                  string name, 
                  string location, 
                  int age, 
-                 int password);
+                 string password);
 
         inline Command getCommand() {
             return command_;
@@ -41,7 +41,7 @@ class Request {
             return age_;
         }
 
-        inline int getPassword() {
+        inline string getPassword() {
             return password_;
         }
 
@@ -61,7 +61,7 @@ class Request {
         string name_;
         string location_;
         int age_;
-        int password_;
+        std::string password_;
         map<string, string> query_;
 };
 

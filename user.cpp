@@ -5,7 +5,7 @@ user::user() {
     name_="";
     location_="";
     age_=0;
-    password_=0;
+    password_="";
 }
 user::user(std::string name,
            std::string location,
@@ -28,7 +28,7 @@ std::string user::getLocation() {
 int user::getAge() {
     return age_;
 }
-int user::getPassword() {
+std::string user::getPassword() {
     return password_;
 }
 void user::setName(std::string name) {
@@ -40,6 +40,6 @@ void user::setLocation(std::string location) {
 void user::setAge(int age) {
     age_ = age;
 }
-void user::setPassword(int password) {
+void user::setPassword(std::string password) {
     password_ = password;
 }

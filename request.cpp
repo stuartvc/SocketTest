@@ -6,13 +6,13 @@ Request::Request() {
     name_ = "";
     location_ = "";
     age_ = 0;
-    password_ = 0;
+    password_ = "";
 }
 Request::Request(Command command, 
                  string name, 
                  string location, 
                  int age, 
-                 int password) {
+                 string password) {
     command_ = command;
     name_ = name;
     location_ = location;
@@ -69,10 +69,10 @@ void Request::setData() {
         age_ = 0;
     }
     try {
-        password_ = atoi(query_.at("password").c_str());
+        password_ = query_.at("password");
     }
     catch (const exception &ex) {
-        password_ = 0;
+        password_ = "";
     }
 }
 

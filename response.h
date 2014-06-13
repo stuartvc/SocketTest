@@ -11,7 +11,7 @@ class Response {
         Response(string name, 
                  string location, 
                  int age, 
-                 int password);
+                 string password);
 
         inline string getName() {
             return name_;
@@ -25,7 +25,7 @@ class Response {
             return age_;
         }
 
-        inline int getPassword() {
+        inline string getPassword() {
             return password_;
         }
 
@@ -43,7 +43,7 @@ class Response {
         string name_;
         string location_;
         int age_;
-        int password_;
+        string password_;
         bool success_;
 };
 
