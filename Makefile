@@ -1,45 +1,35 @@
-CC=g++
-CFLAGS=-c -Wall
+DIRS    := src
+SOURCES := $(foreach dir, $(DIRS), $(wildcard $(dir)/*.cpp))
+OBJS    := $(patsubst %.cpp, %.o, $(SOURCES))
+OBJS    := $(foreach o,$(OBJS),./obj/$(o))
+DEPFILES:= $(patsubst %.o, %.P, $(OBJS))
+
+CFLAGS   = -Wall -MMD -c 
 LDFLAGS=-lsqlite3 -lcrypto
-SERVERSOURCES=main.cpp\
-		user.cpp\
-		database.cpp\
-		response.cpp\
-		request.cpp\
-		parse.cpp\
-		handler.cpp\
-		socket.cpp\
-		logging.cpp
+COMPILER = g++
+ 
+all : client server
 
-CLIENTSOURCES=client.c
-ifndef _ARCH 
-	_ARCH := $(shell uname) 
-	export _ARCH 
-endif
-ifeq ($(shell uname), SunOS)
-	LDFLAGS += -lsocket -lnsl
-endif
+client : client.o
+	g++ client.o -o client 
 
+client.o : client.c
+	g++ -c client.c
 
-SOURCES=$(SERVERSOURCES) $(CLIENTSOURCES)
-
-SERVEROBJECTS=$(SERVERSOURCES:.cpp=.o)
-	SERVER=server
-
-CLIENTOBJECTS=$(CLIENTSOURCES:.cpp=.o)
-	CLIENT=client
-
-all: $(SOURCES) $(SERVER) $(CLIENT)
-		
-$(CLIENT): $(CLIENTOBJECTS) 
-		$(CC) $(CLIENTOBJECTS) $(LDFLAGS) -o $@
-
-$(SERVER): $(SERVEROBJECTS) 
-		$(CC) $(SERVEROBJECTS) $(LDFLAGS) -o $@
-
-.cpp.o:
-		$(CC) $(CFLAGS) $< -o $@
-
-clean :
-	rm *.o
-	rm server client
+#link the executable
+server: $(OBJS)
+	$(COMPILER) $(OBJS) $(LDFLAGS) -o server
+ 
+#generate dependency information and compile
+obj/%.o : %.cpp
+	@mkdir -p $(@D)
+	$(COMPILER) $(CFLAGS) -o $@ -MF obj/$*.P $<
+ 
+#remove all generated files
+clean:
+	rm -f server 
+	rm -f client 
+	rm -rf obj
+ 
+#include the dependency information
+-include $(DEPFILES)

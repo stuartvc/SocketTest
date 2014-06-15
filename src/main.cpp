@@ -23,14 +23,14 @@ int main() {
     database db((char*)"test.db");
 
     //print out the rows in the database for debug
-    user User;
+    /*user User;
     vector<vector<std::string> > vec = db.query((const char*)"SELECT * FROM USER");
     for( std::vector<vector<std::string> >::const_iterator i = vec.begin(); i != vec.end(); ++i) {
         vector<std::string> temp = *i;
         for ( std::vector<std::string>::const_iterator j = temp.begin(); j != temp.end(); j++)
             std::cout << *j << ' ';
         cout << endl;
-    }
+    }*/
 
     //run the server
     //listen for requests
