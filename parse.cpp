@@ -18,7 +18,7 @@ struct keys_and_values : qi::grammar<Iterator, std::map<std::string, std::string
         query =  pair >> *(qi::lit(':') >> pair);
         pair  =  key >> -('=' >> value);
         key   =  +qi::char_("a-zA-Z");
-        value = +qi::char_("a-zA-Z0-9");
+        value = *qi::char_("a-zA-Z0-9");
     }
     qi::rule<Iterator, std::map<std::string, std::string>()> query;
     qi::rule<Iterator, std::pair<std::string, std::string>()> pair;

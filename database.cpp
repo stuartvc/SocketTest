@@ -10,11 +10,12 @@ database::database(char* filename) {
     db = NULL;
     open(filename);
     vector<vector<string> > tableExist = query("SELECT name FROM sqlite_master WHERE type='table' AND name='USER';");
-    if (std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "USER") == tableExist.at(0).end()){
+    if (tableExist.empty() || std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "USER") == tableExist.at(0).end()){
         query("CREATE TABLE USER (name text NOT NULL, location text NOT NULL, age int NOT NULL)");
     }
-    if (std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "AUTH") == tableExist.at(0).end()){
-        query("CREATE TABLE AUTH (name text NOT NULL, password binary NOT NULL)");
+    tableExist = query("SELECT name FROM sqlite_master WHERE type='table' AND name='AUTH';");
+    if (tableExist.empty() || std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "AUTH") == tableExist.at(0).end()){
+        query("CREATE TABLE AUTH (name text NOT NULL, password text NOT NULL)");
     }
 }
 
@@ -57,7 +58,7 @@ vector<vector<string> > database::query(const char* query) {
     }
      
     string error = sqlite3_errmsg(db);
-    if(error != "not an error") ;//cout << query << " " << error << endl;
+    if(error != "not an error") log.log(string(query) + " " + error);
      
     return results;  
 }
@@ -82,9 +83,11 @@ user *database::getUser(user requestUser, user *ResponseUser) {
         sqlSS << "SELECT * FROM USER WHERE name=\""
               << requestUser.getName() << "\";";
         vector<vector<string> > buf = query(sqlSS.str().c_str());
-        ResponseUser->setName(buf[0][0]);
-        ResponseUser->setLocation(buf[0][1]);
-        ResponseUser->setAge(atoi(buf[0][2].c_str()));
+        if (!buf.empty() && buf[0].size() >= 3) {
+            ResponseUser->setName(buf[0][0]);
+            ResponseUser->setLocation(buf[0][1]);
+            ResponseUser->setAge(atoi(buf[0][2].c_str()));
+        }
     }
     else {
         log.log("not authorised");
@@ -115,31 +118,23 @@ void database::close() {
 }
 bool database::setPassword(user *user) {
     ostringstream sqlSS;
-    unsigned char md5[80] = "\0";
-    memset(sha1, '\0', 80);
-    //unsigned char temp[50];
-    //sprintf(temp, "%s", user->getPassword().c_str());
+    unsigned char md5[17];
+    memset(md5, '\0', 17);
     MD5((unsigned const char*)user->getPassword().c_str(), user->getPassword().length(), md5);
-    //sqlSS << "INSERT INTO AUTH (name, password) VALUES (\"" << user->getName() << "\"," << user->getPassword() << ");";
-    cout <<"before" << endl;
-    sqlSS << "INSERT INTO AUTH (name, password) VALUES (\"" << user->getName() << "\"," << md5 << ");";
-    cout <<"before" << sqlSS.str() <<  endl;
+    sqlSS << "INSERT INTO AUTH (name, password) VALUES (\"" << user->getName() << "\",\"" << md5 << "\");";
     query(sqlSS.str().c_str());
-    cout <<"before" << endl;
     return true;
 }
 
 bool database::isAuth(user user) {
     ostringstream sqlSS;
-    unsigned char md5[80];
-    memset(sha1, '\0', 80);
-    MD5((unsigned const char*)user->getPassword().c_str(), user->getPassword().length(), md5);
+    unsigned char md5[17];
+    memset(md5, '\0', 17);
+    MD5((unsigned const char*)user.getPassword().c_str(), user.getPassword().length(), md5);
     sqlSS << "SELECT * FROM AUTH WHERE name=\""
           << user.getName() << "\";";
     vector<vector<string> > buf = query(sqlSS.str().c_str());
-    cout << "pass: " << buf[0][1] << endl;
 
-    return !(user.getPassword().compare(buf[0][1]));
+    return !(buf.empty() || buf[0].empty() || (buf[0][1].compare((const char*)md5)));
 }
-
 

@@ -18,9 +18,9 @@
 void run(database &db);
 
 int main() {
-    database db((char*)"test.db");
-
     log.log("Starting server");
+
+    database db((char*)"test.db");
 
     //print out the rows in the database for debug
     user User;
@@ -47,10 +47,13 @@ void run(database &db) {
     Handler handler;
     Response response;
     Request request;
-    while (1) {
-        socket.readRequest(request);
-        handler.handleRequest(request, response, db);
-        socket.writeResponse(response);
+    try {
+        while (1) {
+            socket.readRequest(request);
+            handler.handleRequest(request, response, db);
+            socket.writeResponse(response);
+        }
     }
+    catch (...) { }
     return ; 
 }

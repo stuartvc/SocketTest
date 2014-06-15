@@ -19,6 +19,7 @@ bool Handler::handleRequest(Request &request, Response &response, database &db) 
         return handleDel(request, response, db);
     }
     else {
+        log.log("unknown command");
         return false;
     }
     //to stuff
