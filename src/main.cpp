@@ -50,7 +50,13 @@ void run(database &db) {
     try {
         while (1) {
             socket.readRequest(request);
-            handler.handleRequest(request, response, db);
+            try {
+                handler.handleRequest(request, response, db);
+            }
+            catch (const string &ex) {
+                response.setSuccess(false);
+                response.setMessage(ex);
+            }
             socket.writeResponse(response);
         }
     }

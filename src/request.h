@@ -11,8 +11,9 @@ using namespace std;
 enum Command {
     getCom = 0,
     setCom = 1,
-    delCom = 2,
-    noCom = 3
+    modCom = 2,
+    delCom = 3,
+    noCom = 4
 };
 
 

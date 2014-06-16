@@ -40,6 +40,9 @@ void Request::setData() {
         else if (!command.compare("set")) {
             command_ = setCom;
         }
+        else if (!command.compare("mod")) {
+            command_ = modCom;
+        }
         else if (!command.compare("del")) {
             command_ = delCom;
         }

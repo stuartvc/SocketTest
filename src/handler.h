@@ -13,6 +13,7 @@ class Handler {
 
         bool handleGet(Request &request, Response &response, database &db);
         bool handleSet(Request &request, Response &response, database &db);
+        bool handleMod(Request &request, Response &response, database &db);
         bool handleDel(Request &request, Response &response, database &db);
 
 };

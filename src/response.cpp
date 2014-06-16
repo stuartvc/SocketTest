@@ -5,6 +5,8 @@ Response::Response() {
     location_ = "";
     age_ = 0;
     password_ = "";
+    success_ = true;
+    message_ = "";
 }
 Response::Response(string name, 
                    string location, 
@@ -14,6 +16,8 @@ Response::Response(string name,
     location_ = location;
     age_ = age;
     password_ = password;
+    success_ = true;
+    message_ = "";
 }
 
 void Response::set(user &User) {

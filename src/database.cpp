@@ -74,11 +74,26 @@ int database::insertUser(user *user) {
     setPassword(user);
     
     return 0;
+}
 
+int database::modifyUser(user *user) {
+    if (isAuth(*user)) {
+        ostringstream sqlSS;
+        sqlSS << "UPDATE USER SET location=\""
+              << user->getLocation() << "\",age="
+              << user->getAge() << " WHERE name=\""
+              << user->getName() << "\";";
+    query(sqlSS.str().c_str());
+    }
+    else {
+        log.log("not authorised");
+        throw string("not authorised");
+    }
+    return 0;
 }
 
 user *database::getUser(user requestUser, user *ResponseUser) {
-    if (isAuth(requestUser)) {
+//    if (isAuth(requestUser)) {
         ostringstream sqlSS;
         sqlSS << "SELECT * FROM USER WHERE name=\""
               << requestUser.getName() << "\";";
@@ -88,10 +103,11 @@ user *database::getUser(user requestUser, user *ResponseUser) {
             ResponseUser->setLocation(buf[0][1]);
             ResponseUser->setAge(atoi(buf[0][2].c_str()));
         }
-    }
+/*    }
     else {
         log.log("not authorised");
-    }
+        throw string("not authorised");
+    }*/
 
     return (ResponseUser);
 }
@@ -109,6 +125,7 @@ int database::deleteUser(user user) {
     }
     else {
         log.log("not authorised");
+        throw string("not authorised");
     }
     return 0;
 }

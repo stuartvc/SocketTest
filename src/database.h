@@ -16,6 +16,7 @@ class database {
         bool open(char* filename);
         vector<vector<string> >query(const char* query);
         int insertUser(user *user);
+        int modifyUser(user *user);
         user *getUser(user , user *ResponseUser);
         int deleteUser(user user);
         void close();

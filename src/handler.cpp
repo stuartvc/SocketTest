@@ -15,6 +15,9 @@ bool Handler::handleRequest(Request &request, Response &response, database &db) 
     else if (setCom == request.getCommand()) {
         return handleSet(request, response, db);
     }
+    else if (modCom == request.getCommand()) {
+        return handleMod(request, response, db);
+    }
     else if (delCom == request.getCommand()) {
         return handleDel(request, response, db);
     }
@@ -34,6 +37,7 @@ bool Handler::handleGet(Request &request, Response &response, database &db) {
 
     db.getUser(requestUser, &responseUser);
 
+    response.setSuccess(true);
     response.set(responseUser);
 
     log.log("Get complete");
@@ -46,11 +50,23 @@ bool Handler::handleSet(Request &request, Response &response, database &db) {
     request.push(User);
     db.insertUser(&User);
 
-    response.success(true);
+    response.setSuccess(true);
     response.set(User);
     log.log("Set complete");
 
     return true;
+}
+bool Handler::handleMod(Request &request, Response &response, database &db) {
+    user User;
+    request.push(User);
+    db.modifyUser(&User);
+
+    response.setSuccess(true);
+    response.set(User);
+    log.log("Mod complete");
+
+    return true;
+
 }
 
 bool Handler::handleDel(Request &request, Response &response, database &db) {
@@ -60,7 +76,7 @@ bool Handler::handleDel(Request &request, Response &response, database &db) {
 
     db.getUser(requestUser, &responseUser);
     db.deleteUser(requestUser);
-    response.success(true);
+    response.setSuccess(true);
     response.set(responseUser);
     log.log("Del complete");
     return true;

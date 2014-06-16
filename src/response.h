@@ -33,10 +33,18 @@ class Response {
             return success_;
         }
 
+        inline string getMessage() {
+            return message_;
+        }
+
         void set(user &User);
 
-        void success(bool success) {
+        void setSuccess(bool success) {
             success_ = success;
+        }
+
+        void setMessage(string message) {
+            message_ = message;
         }
 
     private:
@@ -45,6 +53,7 @@ class Response {
         int age_;
         string password_;
         bool success_;
+        string message_;
 };
 
 #endif

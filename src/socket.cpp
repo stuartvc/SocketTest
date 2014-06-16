@@ -46,10 +46,16 @@ void Socket::writeResponse(Response &response) {
     char buffer[256];
     int len;
     bzero(buffer,256);
-    sprintf(buffer, "name=%s:location=%s:age=%i",
-            response.getName().c_str(),
-            response.getLocation().c_str(),
-            response.getAge());
+    if (response.getSuccess()) {
+        sprintf(buffer, "success=pass:name=%s:location=%s:age=%i",
+                response.getName().c_str(),
+                response.getLocation().c_str(),
+                response.getAge());
+    }
+    else {
+        sprintf(buffer, "success=fail:message=%s",
+                response.getMessage().c_str());
+    }
     len = strlen(buffer);
     log.log("sent message: " + std::string(buffer));
     int n = write(newsockfd_,buffer,len);
