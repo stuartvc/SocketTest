@@ -1,9 +1,11 @@
 #include "database.h"
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <openssl/md5.h>
 #include "logging.h"
+#include <stdio.h>
 
 
 database::database(char* filename) {
@@ -103,6 +105,9 @@ user *database::getUser(user requestUser, user *ResponseUser) {
             ResponseUser->setLocation(buf[0][1]);
             ResponseUser->setAge(atoi(buf[0][2].c_str()));
         }
+        else {
+            throw string("user not found");
+        }
 /*    }
     else {
         log.log("not authorised");
@@ -135,23 +140,31 @@ void database::close() {
 }
 bool database::setPassword(user *user) {
     ostringstream sqlSS;
-    unsigned char md5[17];
-    memset(md5, '\0', 17);
+    unsigned char md5[16];
+    memset(md5, '\0', 16);
     MD5((unsigned const char*)user->getPassword().c_str(), user->getPassword().length(), md5);
-    sqlSS << "INSERT INTO AUTH (name, password) VALUES (\"" << user->getName() << "\",\"" << md5 << "\");";
+    sqlSS << "INSERT INTO AUTH (name, password) VALUES (\"" << user->getName() << "\",\"";
+    for (int i = 0; i < 16; i++) {
+        sqlSS << uppercase << hex << setw(2) << setfill('0') << (int)md5[i] << dec;
+    }
+    sqlSS << "\");";
     query(sqlSS.str().c_str());
     return true;
 }
 
 bool database::isAuth(user user) {
     ostringstream sqlSS;
-    unsigned char md5[17];
-    memset(md5, '\0', 17);
+    ostringstream md5SS;
+    unsigned char md5[16];
+    memset(md5, '\0', 16);
     MD5((unsigned const char*)user.getPassword().c_str(), user.getPassword().length(), md5);
+    for (int i = 0; i < 16; i++) {
+        md5SS << uppercase << hex << setw(2) << setfill('0') << (int)md5[i] << dec;
+    }
     sqlSS << "SELECT * FROM AUTH WHERE name=\""
           << user.getName() << "\";";
     vector<vector<string> > buf = query(sqlSS.str().c_str());
 
-    return !(buf.empty() || buf[0].empty() || (buf[0][1].compare((const char*)md5)));
+    return !(buf.empty() || buf[0].empty() || (buf[0][1].compare(md5SS.str())));
 }
 

@@ -39,6 +39,10 @@ class Response {
 
         void set(user &User);
 
+        void setName(string name) {
+            name_ = name;
+        }
+
         void setSuccess(bool success) {
             success_ = success;
         }

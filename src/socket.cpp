@@ -53,7 +53,8 @@ void Socket::writeResponse(Response &response) {
                 response.getAge());
     }
     else {
-        sprintf(buffer, "success=fail:message=%s",
+        sprintf(buffer, "success=fail:name=%s:message=%s",
+                response.getName().c_str(),
                 response.getMessage().c_str());
     }
     len = strlen(buffer);

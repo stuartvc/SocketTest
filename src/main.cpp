@@ -55,6 +55,7 @@ void run(database &db) {
             }
             catch (const string &ex) {
                 response.setSuccess(false);
+                response.setName(request.getName());
                 response.setMessage(ex);
             }
             socket.writeResponse(response);

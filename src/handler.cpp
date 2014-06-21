@@ -46,12 +46,27 @@ bool Handler::handleGet(Request &request, Response &response, database &db) {
 }
 
 bool Handler::handleSet(Request &request, Response &response, database &db) {
-    user User;
-    request.push(User);
-    db.insertUser(&User);
+
+    user requestUser;
+    user responseUser;
+    request.push(requestUser);
+
+    try {
+        db.getUser(requestUser, &responseUser);
+    }
+    catch (const string ex) {
+        if (ex.compare("user not found"));
+    }
+
+    if (!responseUser.getName().empty()) {
+        log.log("User already exists");
+        throw string("User already exists");
+    }
+
+    db.insertUser(&requestUser);
 
     response.setSuccess(true);
-    response.set(User);
+    response.set(requestUser);
     log.log("Set complete");
 
     return true;
