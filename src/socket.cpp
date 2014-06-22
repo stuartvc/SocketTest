@@ -61,5 +61,6 @@ void Socket::writeResponse(Response &response) {
     log.log("sent message: " + std::string(buffer));
     int n = write(newsockfd_,buffer,len);
     if (n < 0) error("ERROR writing to socket");
+    close(newsockfd_);
 }
 

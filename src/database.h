@@ -23,7 +23,7 @@ class database {
 
     private:
         bool setPassword(user *user);
-        bool isAuth(user user);
+        void isAuth(user user);
         sqlite3 *db;
 };
 

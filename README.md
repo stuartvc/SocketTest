@@ -12,4 +12,6 @@ sqlite3
 
 boost
 
+OpenSSL
+
 ### tested on ubuntu 32 bit

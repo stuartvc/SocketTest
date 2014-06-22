@@ -15,6 +15,10 @@ database::database(char* filename) {
     if (tableExist.empty() || std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "USER") == tableExist.at(0).end()){
         query("CREATE TABLE USER (name text NOT NULL, location text NOT NULL, age int NOT NULL)");
     }
+    tableExist = query("SELECT name FROM sqlite_master WHERE type='table' AND name='ACTIVITY';");
+    if (tableExist.empty() || std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "ACTIVITY") == tableExist.at(0).end()){
+        query("CREATE TABLE ACTIVITY (name text NOT NULL, tableName text NOT NULL)");
+    }
     tableExist = query("SELECT name FROM sqlite_master WHERE type='table' AND name='AUTH';");
     if (tableExist.empty() || std::find(tableExist.at(0).begin(), tableExist.at(0).end(), "AUTH") == tableExist.at(0).end()){
         query("CREATE TABLE AUTH (name text NOT NULL, password text NOT NULL)");
@@ -79,59 +83,45 @@ int database::insertUser(user *user) {
 }
 
 int database::modifyUser(user *user) {
-    if (isAuth(*user)) {
-        ostringstream sqlSS;
-        sqlSS << "UPDATE USER SET location=\""
-              << user->getLocation() << "\",age="
-              << user->getAge() << " WHERE name=\""
-              << user->getName() << "\";";
+    isAuth(*user);
+    ostringstream sqlSS;
+    sqlSS << "UPDATE USER SET location=\""
+          << user->getLocation() << "\",age="
+          << user->getAge() << " WHERE name=\""
+          << user->getName() << "\";";
     query(sqlSS.str().c_str());
-    }
-    else {
-        log.log("not authorised");
-        throw string("not authorised");
-    }
     return 0;
 }
 
 user *database::getUser(user requestUser, user *ResponseUser) {
-//    if (isAuth(requestUser)) {
-        ostringstream sqlSS;
-        sqlSS << "SELECT * FROM USER WHERE name=\""
-              << requestUser.getName() << "\";";
-        vector<vector<string> > buf = query(sqlSS.str().c_str());
-        if (!buf.empty() && buf[0].size() >= 3) {
-            ResponseUser->setName(buf[0][0]);
-            ResponseUser->setLocation(buf[0][1]);
-            ResponseUser->setAge(atoi(buf[0][2].c_str()));
-        }
-        else {
-            throw string("user not found");
-        }
-/*    }
+    ostringstream sqlSS;
+    sqlSS << "SELECT * FROM USER WHERE name=\""
+          << requestUser.getName() << "\";";
+    vector<vector<string> > buf = query(sqlSS.str().c_str());
+    if (!buf.empty() && buf[0].size() >= 3) {
+        ResponseUser->setName(buf[0][0]);
+        ResponseUser->setLocation(buf[0][1]);
+        ResponseUser->setAge(atoi(buf[0][2].c_str()));
+    }
     else {
-        log.log("not authorised");
-        throw string("not authorised");
-    }*/
+        throw string("user not found");
+    }
 
     return (ResponseUser);
 }
 
 int database::deleteUser(user user) {
-    if (isAuth(user)) {
-        ostringstream sqlSS;
-        sqlSS << "DELETE FROM USER WHERE name=\""
-              << user.getName() << "\";";
-        query(sqlSS.str().c_str());
-        ostringstream sqlSS1;
-        sqlSS1 << "DELETE FROM AUTH WHERE name=\""
-              << user.getName() << "\";";
-        query(sqlSS1.str().c_str());
-    }
-    else {
-        log.log("not authorised");
-        throw string("not authorised");
-    }
+    isAuth(user);
+
+    ostringstream sqlSS;
+    sqlSS << "DELETE FROM USER WHERE name=\""
+          << user.getName() << "\";";
+    query(sqlSS.str().c_str());
+    ostringstream sqlSS1;
+    sqlSS1 << "DELETE FROM AUTH WHERE name=\""
+          << user.getName() << "\";";
+    query(sqlSS1.str().c_str());
+
     return 0;
 }
 
@@ -152,7 +142,7 @@ bool database::setPassword(user *user) {
     return true;
 }
 
-bool database::isAuth(user user) {
+void database::isAuth(user user) {
     ostringstream sqlSS;
     ostringstream md5SS;
     unsigned char md5[16];
@@ -165,6 +155,16 @@ bool database::isAuth(user user) {
           << user.getName() << "\";";
     vector<vector<string> > buf = query(sqlSS.str().c_str());
 
-    return !(buf.empty() || buf[0].empty() || (buf[0][1].compare(md5SS.str())));
+    if (buf.empty() || buf[0].empty()) {
+        log.log("user not found");
+        throw string("user not found");
+    }
+    else if(buf[0][1].compare(md5SS.str())) {
+        log.log("not authorised");
+        throw string("not authorised");
+    }
+    else {
+        log.log("request is authorised");
+    }
 }
 
